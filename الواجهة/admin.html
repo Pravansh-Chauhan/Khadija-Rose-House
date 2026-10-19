@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d0b12">
+  <title>إدارة المتجر | Khadija Rose House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <main class="login-page" id="login-view">
+    <a href="index.html" class="brand">Khadija <span>Rose House</span></a>
+    <form class="login-card" id="login-form">
+      <p class="eyebrow">إدارة المتجر</p>
+      <h1>مرحباً بكِ</h1>
+      <p class="muted">سجلي الدخول لحساب إدارة المتجر.</p>
+      <label>البريد الإلكتروني<input class="field" id="login-email" type="email" autocomplete="username" required></label>
+      <label>كلمة المرور<input class="field" id="login-password" type="password" autocomplete="current-password" required></label>
+      <p class="error" id="login-error" role="alert" hidden></p>
+      <button class="button button-gold button-block" id="login-submit" type="submit">دخول آمن</button>
+      <a class="back-link" href="index.html">العودة إلى المتجر</a>
+    </form>
+    <p class="setup-note" id="setup-note" hidden>أكملي إعداد Supabase من ملفات المشروع، ثم أضيفي حساب الإدارة إلى جدول <code>store_admins</code>.</p>
+  </main>
+
+  <div class="dashboard" id="dashboard-view" hidden>
+    <aside class="sidebar">
+      <a href="index.html" class="brand">Khadija <span>Rose House</span></a>
+      <p class="sidebar-label">لوحة المتجر</p>
+      <nav class="side-nav" id="admin-nav" aria-label="أقسام لوحة الإدارة">
+        <button type="button" class="nav-item is-active" data-view="overview">نظرة عامة</button>
+        <button type="button" class="nav-item" data-view="orders">الطلبات <span id="new-order-count">0</span></button>
+        <button type="button" class="nav-item" data-view="products">الباقات</button>
+        <button type="button" class="nav-item" data-view="options">خيارات المصمم المصوّرة</button>
+        <button type="button" class="nav-item" data-view="content">محتوى الموقع</button>
+        <button type="button" class="nav-item" data-view="prices">الأسعار</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <a class="back-link" href="index.html">← عرض المتجر</a>
+        <button class="button button-outline button-block" id="sign-out" type="button">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="topbar">
+        <div><p class="eyebrow">Khadija Rose House</p><h1 id="view-title">نظرة عامة</h1></div>
+        <div class="topbar-actions"><span id="admin-email" class="muted"></span><span id="connection-status" class="connection-pill">متصل</span></div>
+      </header>
+      <p class="error global-error" id="global-error" role="alert" hidden></p>
+      <section class="view-section" id="view-overview">
+        <div class="metric-grid">
+          <article class="metric"><span>إجمالي الطلبات</span><strong id="metric-orders">0</strong></article>
+          <article class="metric"><span>قيمة الطلبات النشطة</span><strong id="metric-sales">0 DH</strong></article>
+          <article class="metric"><span>طلبات جديدة</span><strong id="metric-new">0</strong></article>
+          <article class="metric"><span>أكثر لون طلباً</span><strong id="metric-color">—</strong></article>
+        </div>
+        <div class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">آخر النشاط</p><h2>أحدث الطلبات</h2></div><button class="button button-outline" type="button" data-open-view="orders">كل الطلبات</button></div>
+          <div id="recent-orders" class="order-list"></div>
+        </div>
+      </section>
+
+      <section class="view-section" id="view-orders" hidden>
+        <div class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">إدارة الطلبات</p><h2>طلبات الزبائن</h2></div>
+            <div class="order-filters"><label class="filter-label">بحث<input class="field" id="order-search" type="search" placeholder="الاسم أو الهاتف"></label><label class="filter-label">الحالة<select class="field" id="order-filter"><option value="all">الكل</option><option value="new">جديد</option><option value="sent">تم التواصل</option><option value="cancelled">ملغى</option></select></label></div>
+          </div>
+          <div id="orders-list" class="order-list"></div>
+        </div>
+      </section>
+
+      <section class="view-section" id="view-products" hidden>
+        <div class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">المجموعة الجاهزة</p><h2 id="product-form-heading">إضافة باقة</h2></div></div>
+          <form class="form-grid" id="product-form">
+            <label>اسم الباقة<input class="field" name="name" maxlength="60" required></label>
+            <label>السعر بالدرهم<input class="field" name="price" type="number" min="1" max="100000" required></label>
+            <label>اللون<select class="field" name="color" id="product-color" required></select></label>
+            <label>الحجم<select class="field" name="size"><option>صغير</option><option>متوسط</option><option>كبير</option></select></label>
+            <label class="span-all">وصف مختصر<input class="field" name="description" maxlength="180" required></label>
+            <label class="span-all">رابط صورة HTTPS<input class="field" name="image" type="url" placeholder="https://..." required></label>
+            <div class="form-actions span-all"><button class="button button-gold" type="submit">حفظ الباقة</button><button class="button button-outline" type="button" id="cancel-product-edit" hidden>إلغاء</button></div>
+          </form>
+        </div>
+        <div class="panel"><div class="panel-heading"><div><p class="eyebrow">التحكم في الظهور</p><h2>باقات المتجر</h2></div></div><div class="product-admin-list" id="product-list"></div></div>
+      </section>
+
+      <section class="view-section" id="view-options" hidden>
+        <div class="panel"><div class="panel-heading"><div><p class="eyebrow">المخزون والاختيارات</p><h2>ألوان الورد</h2><p class="muted">تقدري تعدّلي الصورة والاسم أو تخفي أي اختيار من المتجر.</p></div></div><form class="inline-form" id="color-form"><input class="field" name="name" placeholder="اسم اللون" maxlength="35" required><input class="field color-input" name="hex" type="color" value="#e87a90" aria-label="لون العرض"><input class="field" name="image" type="text" placeholder="رابط HTTPS أو مسار صورة داخل assets" required><button class="button button-gold">إضافة لون</button></form><div class="option-list" id="color-list"></div></div>
+        <div class="panel"><div class="panel-heading"><div><p class="eyebrow">خيارات التصميم</p><h2>ورق التغليف</h2></div></div><form class="inline-form option-form" data-option-kind="papers"><input class="field" name="name" placeholder="اسم نوع الورق" maxlength="35" required><input class="field" name="image" type="text" placeholder="رابط HTTPS أو مسار صورة داخل assets" required><button class="button button-gold">إضافة</button></form><div class="option-list" id="paper-list"></div></div>
+        <div class="panel"><div class="panel-heading"><div><p class="eyebrow">اللمسة الأخيرة</p><h2>الأشرطة</h2></div></div><form class="inline-form option-form" data-option-kind="ribbons"><input class="field" name="name" placeholder="اسم لون الشريط" maxlength="35" required><input class="field" name="image" type="text" placeholder="رابط HTTPS أو مسار صورة داخل assets" required><button class="button button-gold">إضافة</button></form><div class="option-list" id="ribbon-list"></div></div>
+        <div class="panel"><div class="panel-heading"><div><p class="eyebrow">الاختيارات الإضافية</p><h2>صور الإضافات</h2></div></div><form class="form-grid addon-images-form" id="addon-images-form"><label>بطاقة الإهداء<input class="field" name="card" type="text" required><img class="addon-image-preview" data-addon-preview="card" alt="معاينة بطاقة الإهداء"></label><label>علبة الهدية<input class="field" name="box" type="text" required><img class="addon-image-preview" data-addon-preview="box" alt="معاينة علبة الهدية"></label><label>إضاءة LED<input class="field" name="led" type="text" required><img class="addon-image-preview" data-addon-preview="led" alt="معاينة إضاءة LED"></label><div class="form-actions span-all"><button class="button button-gold" type="submit">حفظ صور الإضافات</button></div></form></div>
+      </section>
+
+      <section class="view-section" id="view-content" hidden>
+        <form class="panel form-grid" id="content-form">
+          <div class="panel-heading span-all"><div><p class="eyebrow">هوية المتجر</p><h2>محتوى الصفحة الرئيسية</h2></div></div>
+          <label>اسم المتجر<input class="field" name="brandName" maxlength="80" required></label>
+          <label>العنوان الرئيسي<input class="field" name="heroTitle" maxlength="100" required></label>
+          <label class="span-all">النص التعريفي<input class="field" name="heroDescription" maxlength="240" required></label>
+          <label class="span-all">صورة الواجهة (رابط HTTPS)<input class="field" name="heroImage" type="url" required></label>
+          <label class="span-all">قصتنا<input class="field" name="story" maxlength="500" required></label>
+          <label>معلومات الموقع/التوصيل<input class="field" name="location" maxlength="120"></label>
+          <label>رابط Instagram<input class="field" name="instagram" type="url" placeholder="https://instagram.com/..."></label>
+          <label class="span-all">رقم WhatsApp الدولي<input class="field" name="whatsappPhone" type="tel" inputmode="numeric" maxlength="15" placeholder="2126XXXXXXXX" required></label>
+          <label class="switch-row span-all"><span><strong>المتجر مفتوح لاستقبال الطلبات</strong><small>عند الإغلاق، يتوقف إرسال الطلبات من الموقع.</small></span><input type="checkbox" name="storeOpen"></label>
+          <div class="form-actions span-all"><button class="button button-gold" type="submit">حفظ محتوى الموقع</button></div>
+        </form>
+      </section>
+
+      <section class="view-section" id="view-prices" hidden>
+        <form class="panel form-grid" id="prices-form">
+          <div class="panel-heading span-all"><div><p class="eyebrow">التسعير</p><h2>أسعار المصمم</h2></div></div>
+          <label>سعر 10 وردات<input class="field" name="basePrice" type="number" min="0" max="100000" required></label>
+          <label>ثمن كل وردة بعد العاشرة<input class="field" name="extraPrice" type="number" min="0" max="10000" required></label>
+          <label>بطاقة الإهداء<input class="field" name="card" type="number" min="0" max="10000" required></label>
+          <label>علبة الهدية<input class="field" name="box" type="number" min="0" max="10000" required></label>
+          <label>إضاءة LED<input class="field" name="led" type="number" min="0" max="10000" required></label>
+          <div class="form-actions span-all"><button class="button button-gold" type="submit">حفظ الأسعار</button></div>
+        </form>
+      </section>
+    </main>
+  </div>
+  <dialog class="option-dialog" id="option-dialog">
+    <form id="option-edit-form">
+      <div class="panel-heading"><div><p class="eyebrow">تعديل الاختيار</p><h2 id="option-edit-heading">تعديل صورة الخيار</h2></div></div>
+      <label>اسم الخيار<input class="field" name="name" maxlength="35" required></label>
+      <label id="option-color-field">لون المعاينة<input class="field color-input" name="hex" type="color"></label>
+      <label>رابط HTTPS أو مسار صورة داخل assets<input class="field" name="image" type="text" required></label>
+      <p class="error" id="option-edit-error" role="alert" hidden></p>
+      <div class="form-actions"><button class="button button-gold" type="submit">حفظ التعديل</button><button class="button button-outline" id="option-edit-cancel" type="button">إلغاء</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

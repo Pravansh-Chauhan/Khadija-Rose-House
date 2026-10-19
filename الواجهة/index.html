@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d0b12">
+  <meta name="description" content="بوكيهات ورد ساتان دائمة، مصنوعة يدوياً في تارودانت. اختاري باقة جاهزة أو صممي هديتك الخاصة.">
+  <title>Khadija Rose House | الورد الذي لا يذبل</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/storefront.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="storefront.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#home" aria-label="Khadija Rose House - الرئيسية">Khadija <span>Rose House</span></a>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="فتح القائمة">☰</button>
+      <nav class="main-nav" id="main-nav" aria-label="التنقل الرئيسي">
+        <a href="#home">الرئيسية</a>
+        <a href="#collection">المجموعة</a>
+        <a href="#designer">صممي بوكيهك</a>
+        <a href="#story">قصتنا</a>
+      </nav>
+      <button class="cart-open button button-outline" id="cart-open" type="button" aria-label="افتحي سلة المشتريات">
+        السلة <span class="cart-badge" id="cart-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot" id="store-dot"></span><span id="store-status">صنع يدوي بحب · تارودانت</span></p>
+        <h1 id="hero-title">الورد الذي <em>لا يذبل</em></h1>
+        <p class="hero-description" id="hero-description">بوكيهات ساتان مصنوعة يدوياً لتبقى ذكرى جميلة في كل مناسبة.</p>
+        <div class="hero-actions">
+          <a class="button button-gold" href="#collection">اكتشفي المجموعة <span aria-hidden="true">←</span></a>
+          <a class="button button-outline" href="#designer">صممي بوكيهك</a>
+        </div>
+        <div class="hero-note"><span aria-hidden="true">✦</span> كل باقة تُجهز بعناية لتشبه مناسبتك</div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-frame"><img id="hero-image" src="https://images.pexels.com/photos/9430356/pexels-photo-9430356.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="باقة ورود وردية ملفوفة بعناية" fetchpriority="high"></div>
+        <div class="hero-seal"><span>هدية</span><strong>تبقى</strong><span>في القلب</span></div>
+        <span class="hero-sparkle sparkle-one" aria-hidden="true">✳</span>
+        <span class="hero-sparkle sparkle-two" aria-hidden="true">✳</span>
+      </div>
+    </section>
+
+    <section class="section collection-section" id="collection">
+      <div class="container">
+        <div class="section-heading">
+          <div><p class="eyebrow">اختيارات صنعت بحب</p><h2>مجموعتنا</h2></div>
+          <p>اختاري الباقة الأقرب لقلبك، أو ابتكري تنسيقاً خاصاً بك.</p>
+        </div>
+        <div class="filters">
+          <label>اللون <select class="field" id="color-filter"><option value="all">جميع الألوان</option></select></label>
+          <label>الحجم <select class="field" id="size-filter"><option value="all">جميع الأحجام</option><option>صغير</option><option>متوسط</option><option>كبير</option></select></label>
+        </div>
+        <div class="product-grid" id="product-grid" aria-live="polite"></div>
+        <div class="empty-state" id="product-empty" hidden>ما لقيناش باقات بهاد الاختيارات. جربي فلتر آخر.</div>
+      </div>
+    </section>
+
+    <section class="section designer-section" id="designer">
+      <div class="container">
+        <div class="section-heading">
+          <div><p class="eyebrow">لمستك هي الأجمل</p><h2>صممي بوكيهك</h2></div>
+          <p>اختاري التفاصيل خطوة بخطوة، وشوفي ملخص تصميمك وثمنه التقديري.</p>
+        </div>
+        <div class="designer-layout">
+          <form class="designer-panel" id="designer-form">
+            <div class="step-heading">
+              <span id="step-label" aria-live="polite">الخطوة 1 من 4 · عدد الوردات</span>
+              <div class="step-track" role="progressbar" aria-label="تقدم تصميم البوكيه" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><span id="step-progress"></span></div>
+            </div>
+            <div class="builder-step" data-step="1">
+              <label class="input-label" for="rose-count">عدد الوردات</label>
+              <input class="field" id="rose-count" type="number" min="5" max="50" value="10" inputmode="numeric">
+              <p class="field-hint">اختاري من 5 إلى 50 وردة.</p>
+            </div>
+            <div class="builder-step" data-step="2" hidden>
+              <p class="input-label" id="rose-options-label">لون الورد</p><div class="option-grid" id="rose-options" role="group" aria-labelledby="rose-options-label"></div>
+            </div>
+            <div class="builder-step" data-step="3" hidden>
+              <p class="input-label" id="paper-options-label">اختاري ورق التغليف</p>
+              <div class="option-grid material-options" id="paper-options" role="group" aria-labelledby="paper-options-label"></div>
+              <p class="input-label material-label" id="ribbon-options-label">اختاري الشريط</p>
+              <div class="option-grid material-options" id="ribbon-options" role="group" aria-labelledby="ribbon-options-label"></div>
+            </div>
+            <div class="builder-step" data-step="4" hidden>
+              <p class="input-label">أضيفي لمستك الخاصة</p><div class="addon-grid" id="addon-options"></div>
+            </div>
+            <div class="step-actions">
+              <button class="button button-outline" type="button" id="step-back" hidden>السابق</button>
+              <button class="button button-gold" type="button" id="step-next">التالي</button>
+            </div>
+            <p class="form-error" id="designer-error" role="alert" hidden></p>
+          </form>
+          <aside class="design-preview" aria-label="معاينة البوكيه">
+            <div class="bouquet-stage">
+              <svg class="bouquet-art" id="bouquet-art" viewBox="0 0 320 260" role="img" aria-label="معاينة توضيحية للبوكيه"></svg>
+              <div class="preview-badges"><span id="preview-count">10 وردات</span><span id="preview-color">اختاري اللون</span></div>
+            </div>
+            <p class="eyebrow">تفاصيل تصميمك</p>
+            <p class="preview-copy" id="design-summary" aria-live="polite"></p>
+            <ul class="design-specs" id="design-specs" aria-label="تفاصيل خيارات البوكيه"></ul>
+            <div class="preview-total"><span>السعر التقديري</span><strong id="design-price">— DH</strong></div>
+            <button class="button button-gold button-block" type="button" id="add-custom">أضيفي التصميم للسلة</button>
+            <p class="fine-print">السعر النهائي والتوفر يؤكدان معك قبل تجهيز الطلب.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="story-section" id="story">
+      <div class="container story-layout">
+        <div><p class="eyebrow">Khadija Rose House · Taroudant</p><h2>هدية صغيرة،<br><em>ذكرى تدوم.</em></h2></div>
+        <div><p id="story-copy">نصمم كل باقة يدوياً بحب، ونختار ألوانها وتفاصيلها لتناسب أجمل لحظاتك.</p><a class="text-link" href="#designer">ابدئي تصميمك <span aria-hidden="true">←</span></a></div>
+      </div>
+    </section>
+
+    <section class="benefits container" aria-label="مميزاتنا">
+      <article><span>01</span><h3>ورد يدوم</h3><p>جمال الورد مع تفاصيل تدوم لوقت طويل.</p></article>
+      <article><span>02</span><h3>صنع يدوي</h3><p>كل تنسيق يُحضّر بعناية واهتمام.</p></article>
+      <article><span>03</span><h3>تصميم مخصص</h3><p>ألوان وتفاصيل على ذوقك ومناسبتك.</p></article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <a class="brand" href="#home">Khadija <span>Rose House</span></a>
+      <p id="footer-location">صنع بحب في تارودانت</p>
+      <div class="footer-links"><a id="instagram-link" href="#" hidden>Instagram</a><a href="admin.html">دخول الإدارة</a></div>
+      <small>© <span id="current-year"></span> Khadija Rose House</small>
+    </div>
+  </footer>
+
+  <div class="scrim" id="cart-scrim" hidden></div>
+  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" hidden>
+    <div class="drawer-heading"><div><p class="eyebrow">اختياراتك</p><h2 id="cart-title">سلة المشتريات</h2></div><button class="icon-button" id="cart-close" type="button" aria-label="إغلاق السلة">×</button></div>
+    <div class="cart-items" id="cart-items"></div>
+    <p class="cart-empty" id="cart-empty">سلتك فارغة حالياً.</p>
+    <div class="cart-footer"><div class="cart-total"><span>المجموع التقديري</span><strong id="cart-total">0 DH</strong></div><button class="button button-gold button-block" id="checkout" type="button" disabled>أكملي الطلب عبر WhatsApp</button><p class="form-error" id="checkout-error" role="alert" hidden></p></div>
+  </aside>
+
+  <dialog class="order-dialog" id="order-dialog">
+    <form id="order-form">
+      <div class="drawer-heading"><div><p class="eyebrow">خطوة أخيرة</p><h2>معلومات التوصيل</h2></div><button class="icon-button" id="order-close" type="button" aria-label="إغلاق">×</button></div>
+      <p class="muted">سجلي معلوماتك باش نجهزو الطلب ونرسلو التفاصيل عبر واتساب.</p>
+      <label>الاسم الكامل<input class="field" name="name" maxlength="120" required autocomplete="name"></label>
+      <label>رقم الهاتف<input class="field" name="phone" type="tel" maxlength="40" required autocomplete="tel"></label>
+      <label>المدينة<input class="field" name="city" maxlength="120" required autocomplete="address-level2"></label>
+      <label>العنوان<input class="field" name="address" maxlength="300" required autocomplete="street-address"></label>
+      <label>ملاحظة إضافية <textarea class="field" name="note" maxlength="1000" rows="3"></textarea></label>
+      <p class="form-error" id="order-error" role="alert" hidden></p>
+      <button class="button button-gold button-block" id="order-submit" type="submit">تأكيد الطلب والمتابعة لواتساب</button>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
